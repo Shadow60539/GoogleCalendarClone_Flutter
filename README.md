@@ -16,6 +16,7 @@ Before we start, you can take a look at the app:
 - [x] Delete Events
 - [x] Update Events.
 - [x] Multiple Calendar Views.
+- [ ] Dark Theme
 
 
 ## How To Use
@@ -27,7 +28,7 @@ To clone and run this application, you'll need [Git](https://git-scm.com) and [F
 $ git clone https://github.com/Shadow60539/GoogleCalendarClone_Flutter.git
 
 # Go into the repository
-$ cd GoogleCalendarClone_Flutter.git
+$ cd GoogleCalendarClone_Flutter
 
 # Paste google-services.json file to /android/app
 
