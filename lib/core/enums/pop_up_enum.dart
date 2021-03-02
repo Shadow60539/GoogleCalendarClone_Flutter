@@ -1,0 +1,1 @@
+enum PopEntry {delete, logout}
