@@ -83,7 +83,7 @@ class DrawerChild extends StatelessWidget {
                 ),
                 color: model.calendarEntry == calendarEntry
                     ? Palette.lightBlue.withOpacity(0.2)
-                    : Palette.white,
+                    : null,
               ),
               child: Row(
                 children: [
@@ -91,7 +91,7 @@ class DrawerChild extends StatelessWidget {
                     _getIcons(),
                     color: model.calendarEntry == calendarEntry
                         ? Palette.lightBlue
-                        : Palette.black50,
+                        : Palette.greyWhite.withOpacity(0.75),
                   ),
                   const SizedBox(
                     width: 10,
@@ -101,7 +101,7 @@ class DrawerChild extends StatelessWidget {
                     style: TextStyle(
                         color: model.calendarEntry == calendarEntry
                             ? Palette.lightBlue
-                            : Palette.black75),
+                            : Palette.greyWhite.withOpacity(0.5)),
                   ),
                 ],
               ),

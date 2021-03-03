@@ -1,5 +1,4 @@
 import 'package:date_format/date_format.dart';
-import 'package:flushbar/flushbar_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/application/calendar/calendar_bloc.dart';
@@ -7,6 +6,7 @@ import 'package:flutter_app/application/calendar/event_form/event_form_bloc.dart
 import 'package:flutter_app/core/routes/route.gr.dart' as route;
 import 'package:flutter_app/domain/calendar/appointment.dart';
 import 'package:flutter_app/injection.dart';
+import 'package:flutter_app/presentation/calendar/utils/feedback.dart';
 import 'package:flutter_app/presentation/calendar/utils/minute_of_day_to_hour.dart';
 import 'package:flutter_app/presentation/core/palette.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -40,15 +40,20 @@ class _UpdateFormPageState extends State<UpdateFormPage> {
           state.calFailureOrSuccessOption.fold(
             () => null,
             (a) => a.fold(
-              (l) => FlushbarHelper.createError(
+              (l) => showFeedback(
+                  context: context,
                   message: l.map(
-                serverError: (value) => 'SERVER ERROR',
-                startAndEndDateError: (value) =>
-                    'End Date should be greater than Start Date',
-                invalidCredentialsError: (value) =>
-                    'Unauthenticated Error! logout and login after some time',
-              )).show(context),
+                    serverError: (value) => 'SERVER ERROR',
+                    startAndEndDateError: (value) =>
+                        'End Date should be greater than Start Date',
+                    invalidCredentialsError: (value) =>
+                        'Unauthenticated Error! logout and login after some time',
+                  )),
               (_) {
+                showFeedback(
+                  context: context,
+                  message: 'Updating Event',
+                );
                 BlocProvider.of<CalendarBloc>(context)
                     .add(const CalendarEvent.getGoogleEvents());
                 route.Router.navigator
@@ -64,16 +69,16 @@ class _UpdateFormPageState extends State<UpdateFormPage> {
             autovalidate: state.showErrorMessages,
             child: SafeArea(
               child: Scaffold(
-                backgroundColor: Palette.white,
+                // backgroundColor: Palette.white,
                 appBar: AppBar(
                   leading: IconButton(
                       icon: Icon(
                         Icons.close,
-                        color: Palette.black75,
+                        color: Palette.greyWhite.withOpacity(0.5),
                       ),
                       onPressed: () => Navigator.pop(context)),
                   elevation: 0,
-                  backgroundColor: Palette.white,
+                  backgroundColor: Colors.transparent,
                   actions: [
                     Padding(
                       padding: const EdgeInsets.symmetric(
@@ -82,19 +87,15 @@ class _UpdateFormPageState extends State<UpdateFormPage> {
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5)),
-                        color: Palette.darkBlue,
+                        color: Palette.lightBlue,
                         onPressed: () {
-                          FlushbarHelper.createLoading(
-                                  message: 'Updating Event',
-                                  linearProgressIndicator: null)
-                              .show(context);
                           context
                               .bloc<EventFormBloc>()
                               .add(const EventFormEvent.updatePressed());
                         },
                         child: Text(
                           'Update',
-                          style: TextStyle(color: Palette.white),
+                          style: TextStyle(color: Palette.greyWhite),
                         ),
                       ),
                     )
@@ -121,14 +122,16 @@ class _UpdateFormPageState extends State<UpdateFormPage> {
                               ),
                               (r) => null,
                             ),
-                        cursorColor: Palette.darkBlue,
-                        style: TextStyle(fontSize: 25, color: Palette.black75),
+                        cursorColor: Palette.greyWhite.withOpacity(0.2),
+                        style:
+                            TextStyle(fontSize: 25, color: Palette.greyWhite),
                         decoration: InputDecoration(
                             hintText: 'Add title',
+                            errorStyle: TextStyle(color: Palette.lightBlue),
                             border: const OutlineInputBorder(
                                 borderSide: BorderSide.none),
-                            hintStyle:
-                                TextStyle(fontSize: 25, color: Palette.black50),
+                            hintStyle: const TextStyle(
+                                fontSize: 25, color: Colors.grey),
                             contentPadding:
                                 const EdgeInsets.only(left: 60, bottom: 20)),
                       ),
@@ -142,7 +145,7 @@ class _UpdateFormPageState extends State<UpdateFormPage> {
                               children: [
                                 Icon(
                                   FontAwesomeIcons.clock,
-                                  color: Palette.black50,
+                                  color: Palette.greyWhite.withOpacity(0.5),
                                   size: 18,
                                 ),
                                 const SizedBox(
@@ -151,7 +154,7 @@ class _UpdateFormPageState extends State<UpdateFormPage> {
                                 Text(
                                   'Timings',
                                   style: TextStyle(
-                                      color: Palette.black50, fontSize: 18),
+                                      color: Palette.greyWhite.withOpacity(0.5), fontSize: 18),
                                 ),
                               ],
                             ),
@@ -169,11 +172,7 @@ class _UpdateFormPageState extends State<UpdateFormPage> {
                                   showDatePicker(
                                     context: context,
                                     builder: (context, child) => Theme(
-                                      data: ThemeData().copyWith(
-                                          // colorScheme: ColorScheme.light().copyWith(
-                                          //   primary: Palette.white,
-                                          // ),
-                                          ),
+                                      data: ThemeData.dark(),
                                       child: child,
                                     ),
                                     initialDate: state.startDate,
@@ -190,18 +189,17 @@ class _UpdateFormPageState extends State<UpdateFormPage> {
                                 child: Text(
                                   _formatedDate(state.startDate),
                                   style: TextStyle(
-                                      color: Palette.black50, fontSize: 14),
+                                      color: Palette.greyWhite.withOpacity(0.5), fontSize: 14),
                                 )),
                             TextButton(
+                                style: ButtonStyle(
+                                    foregroundColor: MaterialStateProperty.all(
+                                        Palette.greyWhite.withOpacity(0.5))),
                                 onPressed: () {
                                   showTimePicker(
                                     context: context,
                                     builder: (context, child) => Theme(
-                                      data: ThemeData().copyWith(
-                                          // colorScheme: ColorScheme.light().copyWith(
-                                          //   primary: Palette.white,
-                                          // ),
-                                          ),
+                                      data: ThemeData.dark(),
                                       child: child,
                                     ),
                                     initialTime:
@@ -229,11 +227,7 @@ class _UpdateFormPageState extends State<UpdateFormPage> {
                                   showDatePicker(
                                     context: context,
                                     builder: (context, child) => Theme(
-                                      data: ThemeData().copyWith(
-                                          // colorScheme: ColorScheme.light().copyWith(
-                                          //   primary: Palette.white,
-                                          // ),
-                                          ),
+                                      data: ThemeData.dark(),
                                       child: child,
                                     ),
                                     initialDate: state.endDate,
@@ -249,18 +243,17 @@ class _UpdateFormPageState extends State<UpdateFormPage> {
                                 child: Text(
                                   _formatedDate(state.endDate),
                                   style: TextStyle(
-                                      color: Palette.black50, fontSize: 14),
+                                      color: Palette.greyWhite.withOpacity(0.5), fontSize: 14),
                                 )),
                             TextButton(
+                                style: ButtonStyle(
+                                    foregroundColor: MaterialStateProperty.all(
+                                        Palette.greyWhite.withOpacity(0.5))),
                                 onPressed: () {
                                   showTimePicker(
                                     context: context,
                                     builder: (context, child) => Theme(
-                                      data: ThemeData().copyWith(
-                                          // colorScheme: ColorScheme.light().copyWith(
-                                          //   primary: Palette.white,
-                                          // ),
-                                          ),
+                                      data: ThemeData.dark(),
                                       child: child,
                                     ),
                                     initialTime:
@@ -294,8 +287,8 @@ class _Divider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Divider(
-      color: Palette.bluishWhite,
-      thickness: 1,
+      color: Palette.greyWhite,
+      thickness: 0.1,
     );
   }
 }

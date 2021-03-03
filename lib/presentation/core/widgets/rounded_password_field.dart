@@ -30,7 +30,9 @@ class _RoundedPasswordFieldState extends State<RoundedPasswordField> {
         onChanged: widget.onChanged,
         cursorColor: Palette.darkBlue,
         decoration: InputDecoration(
+          errorStyle: TextStyle(color: Palette.darkBlue),
           hintText: "Password",
+          hintStyle: TextStyle(color: Palette.darkBlue),
           icon: Icon(
             Icons.lock,
             color: Palette.darkBlue,

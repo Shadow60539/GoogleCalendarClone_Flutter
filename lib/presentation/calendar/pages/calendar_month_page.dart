@@ -1,4 +1,3 @@
-
 import 'package:calendar_views/calendar_views.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter/cupertino.dart';
@@ -33,50 +32,45 @@ class _CalendarMonthPageState extends State<CalendarMonthPage> {
       listener: (context, state) {},
       builder: (context, state) {
         return Scaffold(
-            backgroundColor: Palette.white,
+            // backgroundColor: Palette.white,
             body: MonthPageView(
-              controller: state.monthPageController,
-              onMonthChanged: (newDay) {
-                BlocProvider.of<CalendarBloc>(context)
-                    .add(CalendarEvent.onDaysChanged(newDay: newDay));
-              },
-              pageBuilder: (_, month) {
-                return MonthView(
-                  month: month,
-                  firstWeekday: 7,
-                  headerItemBuilder: _headerItemBuilder,
-                  dayOfMonthBuilder: _daysOfMonthBuilder,
-                );
-              },
-            ));
+          controller: state.monthPageController,
+          onMonthChanged: (newDay) {
+            BlocProvider.of<CalendarBloc>(context)
+                .add(CalendarEvent.onDaysChanged(newDay: newDay));
+          },
+          pageBuilder: (_, month) {
+            return MonthView(
+              month: month,
+              firstWeekday: 7,
+              headerItemBuilder: _headerItemBuilder,
+              dayOfMonthBuilder: _daysOfMonthBuilder,
+            );
+          },
+        ));
       },
     );
   }
 
   Widget _headerItemBuilder(BuildContext context, int weekDay) {
-    return Container(
-      decoration: BoxDecoration(
-          border: Border(
-        // left: BorderSide(color: Palette.black50, width: 0.2),
-        bottom: BorderSide(color: Palette.black50, width: 0.2),
-        // right: BorderSide(color: Palette.black50, width: 0.2),
-      )),
-      child: Align(
-        alignment: Alignment.topCenter,
-        child: Column(
-          children: <Widget>[
-            const SizedBox(
-              height: 10,
-            ),
-            Text(
-              weekdayToAbbreviatedString(weekDay).substring(0, 1).toUpperCase(),
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Palette.black50,
-                  fontSize: 12),
-            ),
-          ],
-        ),
+    return Align(
+      alignment: Alignment.topCenter,
+      child: Column(
+        children: <Widget>[
+          const SizedBox(
+            height: 10,
+          ),
+          Text(
+            weekdayToAbbreviatedString(weekDay).substring(0, 1).toUpperCase(),
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Palette.greyWhite.withOpacity(0.5),
+                fontSize: 12),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+        ],
       ),
     );
   }
@@ -132,10 +126,17 @@ class _SingleDayBuilder extends StatelessWidget {
       child: Container(
           decoration: BoxDecoration(
               border: Border(
-            left: BorderSide(color: Palette.black50, width: 0.2),
-            bottom: BorderSide(color: Palette.black50, width: 0.2),
-            // right: BorderSide(color: Palette.black50, width: 0.2),
-          )),
+            left: BorderSide(
+                color: Palette.greyWhite.withOpacity(0.5), width: 0.2),
+            bottom: BorderSide(
+                color: Palette.greyWhite.withOpacity(0.5), width: 0.2),
+            right: BorderSide(
+                color: Palette.greyWhite.withOpacity(0.5), width: 0.2),
+            top: BorderSide(
+                color: Palette.greyWhite.withOpacity(0.5), width: 0.2),
+          )
+              // right: BorderSide(color: Palette.black50, width: 0.2),
+              ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -148,12 +149,15 @@ class _SingleDayBuilder extends StatelessWidget {
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: _isToday ? Palette.bluishWhite : Palette.white),
+                        color: _isToday
+                            ? Palette.bluishWhite
+                            : Colors.transparent.withOpacity(0.2)),
                     child: Text(
                       formatDate(day, ['d']),
                       style: TextStyle(
-                          color:
-                              _isToday ? Palette.lightBlue : Palette.black75),
+                          color: _isToday
+                              ? Palette.lightBlue
+                              : Palette.greyWhite.withOpacity(0.5)),
                     ),
                   ),
                 ),
@@ -165,10 +169,13 @@ class _SingleDayBuilder extends StatelessWidget {
                   final _lastIndex =
                       _appointments.length > 4 ? 4 : _appointments.length;
                   if (index == _lastIndex) {
-                    return Icon(
-                      Icons.more_horiz_rounded,
-                      color: _lastIndex > 3 ? Palette.black50 : Palette.white,
-                      size: 16,
+                    return Visibility(
+                      visible: _lastIndex > 3,
+                      child: Icon(
+                        Icons.more_horiz_rounded,
+                        color: Palette.greyWhite,
+                        size: 16,
+                      ),
                     );
                   } else {
                     return Container(

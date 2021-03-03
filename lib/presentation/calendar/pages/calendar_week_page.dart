@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_app/application/calendar/calendar_bloc.dart';
 import 'package:flutter_app/core/enums/calendar_entry_enum.dart';
-import 'package:flutter_app/presentation/core/palette.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../utils/calendar_utils.dart';
@@ -24,7 +23,7 @@ class _CalendarWeekPageState extends State<CalendarWeekPage> {
       },
       builder: (context, state) {
         return Scaffold(
-            backgroundColor: Palette.white,
+            // backgroundColor: Palette.white,
             body: DaysPageView(
               onDaysChanged: (listOfDays) {
                 BlocProvider.of<CalendarBloc>(context)
@@ -43,7 +42,7 @@ class _CalendarWeekPageState extends State<CalendarWeekPage> {
                       Container(
                         alignment: Alignment.centerLeft,
                         padding: const EdgeInsets.only(bottom: 20),
-                        decoration: BoxDecoration(color: Palette.white),
+                        // decoration: BoxDecoration(color: Palette.white),
                         child: DayViewDaysHeader(
                           headerItemBuilder: (context, day) =>
                               headerItemBuilder(

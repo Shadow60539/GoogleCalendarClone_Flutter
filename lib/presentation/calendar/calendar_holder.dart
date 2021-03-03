@@ -1,7 +1,7 @@
 import 'package:date_format/date_format.dart';
-import 'package:flushbar/flushbar_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_app/application/auth/auth_bloc.dart';
 import 'package:flutter_app/application/calendar/calendar_bloc.dart';
 import 'package:flutter_app/core/enums/calendar_entry_enum.dart';
@@ -9,6 +9,7 @@ import 'package:flutter_app/core/enums/pop_up_enum.dart';
 import 'package:flutter_app/presentation/calendar/pages/calendar_day_page.dart';
 import 'package:flutter_app/presentation/calendar/pages/calendar_month_page.dart';
 import 'package:flutter_app/presentation/calendar/pages/calendar_week_page.dart';
+import 'package:flutter_app/presentation/calendar/utils/feedback.dart';
 import 'package:flutter_app/presentation/calendar/widgets/drawer.dart';
 import 'package:flutter_app/presentation/calendar/widgets/fab_widget.dart';
 import 'package:flutter_app/presentation/core/palette.dart';
@@ -48,23 +49,21 @@ class CalendarHolder extends StatelessWidget {
       listener: (context, state) {
         state.isLoading.fold(
           () => null,
-          (a) => FlushbarHelper.createInformation(
-                  message: 'Refreshing Events',
-                  duration: const Duration(seconds: 1))
-              .show(context),
+          (a) => null,
         );
         state.failureOrSuccess.fold(
           () => null,
           (a) => a.fold(
-            (l) => FlushbarHelper.createError(
-                message: l.maybeMap(
-              orElse: () => null,
-              serverError: (value) => 'Something went wrong! Please try again',
-              invalidCredentialsError: (value) => 'Unauthenticated Error! logout and login after some time',
-            )).show(context),
-            (r) =>
-                FlushbarHelper.createSuccess(message: 'Success').show(context),
-          ),
+              (l) => showFeedback(
+                  context: context,
+                  message: l.maybeMap(
+                    orElse: () => null,
+                    serverError: (value) =>
+                        'Something went wrong! Please try again',
+                    invalidCredentialsError: (value) =>
+                        'Unauthenticated Error! logout and login after some time',
+                  )),
+              (r) => showFeedback(context: context, message: "Success")),
         );
       },
       builder: (context, state) {
@@ -73,19 +72,16 @@ class CalendarHolder extends StatelessWidget {
             Scaffold(
                 key: _scaffoldKey,
                 drawer: Drawer(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(color: Palette.white),
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 100),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: CalendarEntry.values
-                            .map((entry) => DrawerChild(
-                                  model: state,
-                                  calendarEntry: entry,
-                                ))
-                            .toList(),
-                      ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 100),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: CalendarEntry.values
+                          .map((entry) => DrawerChild(
+                                model: state,
+                                calendarEntry: entry,
+                              ))
+                          .toList(),
                     ),
                   ),
                 ),
@@ -95,31 +91,59 @@ class CalendarHolder extends StatelessWidget {
                   leading: IconButton(
                     icon: Icon(
                       Icons.menu,
-                      color: Palette.black75,
+                      color: Palette.greyWhite.withOpacity(0.5),
                     ),
                     onPressed: () {
                       _scaffoldKey.currentState.openDrawer();
                     },
                   ),
-                  title: Text(
-                    formatDate(state.focusedDay, ['MM']),
-                    style: TextStyle(
-                        color: Palette.black75, fontWeight: FontWeight.w300),
+                  title: AnimatedSwitcher(
+                    layoutBuilder: (currentChild, previousChildren) {
+                      return Align(
+                        alignment: Alignment.centerLeft,
+                        child: currentChild,
+                      );
+                    },
+                    duration: const Duration(milliseconds: 300),
+                    switchInCurve: Curves.ease,
+                    switchOutCurve: Curves.ease,
+                    transitionBuilder: (child, animation) {
+                      return FadeTransition(
+                        opacity: animation,
+                        child: SlideTransition(
+                            position:
+                                Tween(begin: Offset(0, 0.5), end: Offset.zero)
+                                    .animate(animation),
+                            child: child),
+                      );
+                    },
+                    child: Text(
+                      formatDate(state.focusedDay, ['MM']),
+                      key: ValueKey(formatDate(state.focusedDay, ['MM'])),
+                      style: TextStyle(
+                          color: Palette.bluishWhite,
+                          fontWeight: FontWeight.w300),
+                    ),
                   ),
                   elevation: 0,
                   actions: [
                     IconButton(
                         icon: Icon(
                           Icons.refresh,
-                          color: Palette.black75,
+                          color: Palette.greyWhite.withOpacity(0.5),
                         ),
                         onPressed: () {
+                          showFeedback(
+                              context: context, message: 'Refreshing events');
                           context
                               .bloc<CalendarBloc>()
                               .add(const CalendarEvent.getGoogleEvents());
                         }),
                     IconButton(
-                      icon: Icon(Icons.today, color: Palette.black75),
+                      icon: Icon(
+                        Icons.today,
+                        color: Palette.greyWhite.withOpacity(0.5),
+                      ),
                       onPressed: () {
                         BlocProvider.of<CalendarBloc>(context)
                             .add(const CalendarEvent.moveToTodayForDay());
@@ -132,15 +156,30 @@ class CalendarHolder extends StatelessWidget {
                       },
                     ),
                     PopupMenuButton(
+                      icon: Icon(
+                        Icons.more_vert,
+                        color: Palette.greyWhite.withOpacity(0.5),
+                      ),
+                      captureInheritedThemes: true,
+                      padding: const EdgeInsets.all(0),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                      offset: Offset(100, 100),
                       onSelected: (value) {
                         BlocProvider.of<AuthBloc>(context)
                             .add(const AuthEvent.signedOut());
                       },
                       itemBuilder: (context) {
                         return [
-                          const PopupMenuItem(
+                          PopupMenuItem(
+                            height: 30,
                             value: PopEntry.logout,
-                            child: Text('Logout'),
+                            child: Text(
+                              'Logout',
+                              style: TextStyle(color: Palette.greyWhite),
+                            ),
                           ),
                         ];
                       },
@@ -149,7 +188,7 @@ class CalendarHolder extends StatelessWidget {
                 ),
                 body: _calendarView(state.calendarEntry)),
             state.isLoading.fold(() => const SizedBox.shrink(),
-                (a) => const Center(child: CircularProgressIndicator()))
+                (a) => const Center(child: CupertinoActivityIndicator()))
           ],
         );
       },

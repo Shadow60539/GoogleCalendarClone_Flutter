@@ -21,10 +21,10 @@ class InsertEventButton extends StatelessWidget {
             onPressed: () {
               action();
             },
-            backgroundColor: Palette.white,
+            backgroundColor: Palette.lightBlue,
             child: Icon(
               FontAwesomeIcons.plus,
-              color: Palette.lightBlue,
+              color: Palette.greyWhite,
             ),
           ),
         );

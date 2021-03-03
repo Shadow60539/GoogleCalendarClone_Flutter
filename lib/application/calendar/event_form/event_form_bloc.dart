@@ -79,20 +79,10 @@ class EventFormBloc extends Bloc<EventFormEvent, EventFormState> {
         );
       },
       savePressed: (e) async* {
-        yield* _onPressed(
-            forwardCall: repo.insertGoogleEvent(
-          title: state.title,
-          start: state.startDate,
-          end: state.endDate,
-        ));
+        yield* _onPressed(forwardCall: repo.insertGoogleEvent);
       },
       updatePressed: (e) async* {
-        yield* _onPressed(
-            forwardCall: repo.updateGoogleEvent(
-                title: state.title,
-                start: state.startDate,
-                end: state.endDate,
-                eventId: state.eventId));
+        yield* _onPressed(forwardCall: repo.updateGoogleEvent);
       },
       updateEvent: (e) async* {
         yield state.copyWith(
@@ -106,11 +96,17 @@ class EventFormBloc extends Bloc<EventFormEvent, EventFormState> {
   }
 
   Stream<EventFormState> _onPressed(
-      {Future<Either<CalendarFailure, Unit>> forwardCall}) async* {
+      {Future<Either<CalendarFailure, Unit>> Function({
+        @required StringSingleLine title,
+        @required DateTime start,
+        @required DateTime end,
+        String eventId,
+      })
+          forwardCall}) async* {
     Either<CalendarFailure, Unit> failureOrSuccess;
 
     if (state.title.isValid()) {
-      failureOrSuccess = await forwardCall;
+      failureOrSuccess = await forwardCall();
 
       yield state.copyWith(
         showErrorMessages: true,

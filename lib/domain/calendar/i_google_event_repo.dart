@@ -8,7 +8,7 @@ abstract class IGoogleEventRepo {
   Future<Either<CalendarFailure, Unit>> deleteGoogleEvent(
       {String calendarId, String eventId});
   Future<Either<CalendarFailure, Unit>> insertGoogleEvent(
-      {StringSingleLine title, DateTime start, DateTime end});
+      {StringSingleLine title, DateTime start, DateTime end, String eventId});
   Future<Either<CalendarFailure, Unit>> updateGoogleEvent(
       {StringSingleLine title, DateTime start, DateTime end, String eventId});
 }

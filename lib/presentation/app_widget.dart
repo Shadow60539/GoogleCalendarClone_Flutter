@@ -32,15 +32,13 @@ class AppWidget extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'LearnWithYoutube',
-        theme: ThemeData(
-                primaryColor: Colors.white,
-                textTheme: GoogleFonts.poppinsTextTheme())
-            .copyWith(
-                pageTransitionsTheme: const PageTransitionsTheme(
-          builders: <TargetPlatform, PageTransitionsBuilder>{
-            TargetPlatform.android: ZoomPageTransitionsBuilder(),
-          },
-        )),
+        theme: ThemeData.dark().copyWith(
+            textTheme: GoogleFonts.poppinsTextTheme(),
+            pageTransitionsTheme: const PageTransitionsTheme(
+              builders: <TargetPlatform, PageTransitionsBuilder>{
+                TargetPlatform.android: ZoomPageTransitionsBuilder(),
+              },
+            )),
         debugShowCheckedModeBanner: false,
         onGenerateRoute: route.Router.onGenerateRoute,
         initialRoute: route.Router.splashScreen,

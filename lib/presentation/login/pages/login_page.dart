@@ -1,11 +1,11 @@
 import 'package:animations/animations.dart';
-import 'package:flushbar/flushbar_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/application/auth/auth_bloc.dart';
 import 'package:flutter_app/application/auth/sign_in_form/sign_in_form_bloc.dart';
 import 'package:flutter_app/application/providers/auth_provider.dart';
 import 'package:flutter_app/core/enums/auth_current_enum.dart';
 import 'package:flutter_app/core/routes/route.gr.dart' as route;
+import 'package:flutter_app/presentation/calendar/utils/feedback.dart';
 import 'package:flutter_app/presentation/core/palette.dart';
 import 'package:flutter_app/presentation/core/widgets/alreadyhaveanaccount.dart';
 import 'package:flutter_app/presentation/core/widgets/rounded_button.dart';
@@ -14,6 +14,7 @@ import 'package:flutter_app/presentation/core/widgets/rounded_password_field.dar
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+
 import '../../../injection.dart';
 
 class HandleAuthPage extends StatelessWidget {
@@ -44,7 +45,8 @@ class HandleAuthPage extends StatelessWidget {
               (either) {
                 either.fold(
                   (failure) {
-                    FlushbarHelper.createError(
+                    showFeedback(
+                      context: context,
                       message: failure.map(
                         cancelledByUser: (_) => 'Cancelled',
                         serverError: (_) => 'Server error',
@@ -52,9 +54,11 @@ class HandleAuthPage extends StatelessWidget {
                         invalidEmailAndPasswordCombination: (_) =>
                             'Invalid email and password combination',
                       ),
-                    ).show(context);
+                    );
                   },
                   (_) {
+                    showFeedback(context: context, message: 'Welcome back' );
+
                     route.Router.navigator
                         .pushReplacementNamed(route.Router.homePage);
                     context
@@ -94,7 +98,10 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(elevation: 0),
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+        ),
         backgroundColor: Palette.white,
         body: SingleChildScrollView(
           child: Column(
@@ -124,7 +131,6 @@ class LoginPage extends StatelessWidget {
                 validator: (_) => context
                     .bloc<SignInFormBloc>()
                     .state
-                    
                     .emailAddress
                     .value
                     .fold(
@@ -201,6 +207,7 @@ class SignUpPage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
+          backgroundColor: Colors.transparent,
         ),
         backgroundColor: Palette.white,
         body: SingleChildScrollView(

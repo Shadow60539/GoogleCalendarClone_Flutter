@@ -11,7 +11,7 @@ import 'package:flutter_app/presentation/home/pages/appointment_page.dart';
 Widget headerItemBuilder(
     BuildContext context, DateTime day, CalendarEntry calendarEntry) {
   return Align(
-    alignment: Alignment.topLeft,
+    alignment: Alignment.centerLeft,
     child: Column(
       children: <Widget>[
         const SizedBox(
@@ -25,12 +25,12 @@ Widget headerItemBuilder(
               : weekdayToAbbreviatedString(day.weekday).toUpperCase(),
           style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: Palette.black50,
+              color: Palette.greyWhite.withOpacity(0.75),
               fontSize: 12),
         ),
         Text(
           "${day.day}",
-          style: TextStyle(fontSize: 16, color: Palette.black75),
+          style: TextStyle(fontSize: 16, color: Palette.greyWhite),
         ),
       ],
     ),
@@ -51,7 +51,7 @@ Positioned generatedTimeIndicatorBuilder(
     child: Center(
       child: Text(
         timeHourString(minuteOfDay),
-        style: TextStyle(color: Palette.black50),
+        style: TextStyle(color: Palette.greyWhite.withOpacity(0.5)),
       ),
     ),
   );
@@ -68,8 +68,8 @@ Positioned generatedSupportLineBuilder(
     left: itemPosition.left,
     width: itemWidth,
     child: Container(
-      height: 0.7,
-      color: Palette.bluishWhite,
+      height: 0.1,
+      color: Palette.greyWhite,
     ),
   );
 }
@@ -87,7 +87,7 @@ Positioned generatedDaySeparatorBuilder(
     height: itemSize.height,
     child: Center(
       child: Container(
-        width: 0.7,
+        width: 0.1,
         color: Palette.greyWhite,
       ),
     ),
@@ -108,6 +108,9 @@ Positioned eventBuilder(
     child: OpenContainer(
       openElevation: 0,
       closedElevation: 0,
+      transitionType: ContainerTransitionType.fadeThrough,
+      closedColor: Palette.lightBlue,
+      openColor: Colors.black,
       closedBuilder: (context, action) {
         return InkWell(
           onTap: action,
@@ -119,7 +122,7 @@ Positioned eventBuilder(
               color: Palette.lightBlue,
             ),
             child: Text(
-              event.title??'(No title)',
+              event.title ?? '(No title)',
               overflow: TextOverflow.fade,
               style: TextStyle(
                 color: Palette.white,

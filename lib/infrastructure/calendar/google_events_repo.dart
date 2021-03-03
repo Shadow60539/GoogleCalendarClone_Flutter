@@ -84,7 +84,7 @@ class GoogleEventsRepo extends IGoogleEventRepo {
 
   @override
   Future<Either<CalendarFailure, Unit>> insertGoogleEvent(
-      {StringSingleLine title, DateTime start, DateTime end}) async {
+      {StringSingleLine title, DateTime start, DateTime end, String eventId}) async {
     try {
       final String summary = title.value.getOrElse(() => 'INVALID TITLE');
       final googleAPI.CalendarApi api = _calendarProvider.calendarApi;
