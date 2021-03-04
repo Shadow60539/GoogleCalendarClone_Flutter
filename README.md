@@ -16,7 +16,8 @@ Before we start, you can take a look at the app:
 - [x] Delete Events
 - [x] Update Events.
 - [x] Multiple Calendar Views.
-- [ ] Dark Theme
+- [x] Dark Theme
+- [ ] Chats
 
 
 ## How To Use
