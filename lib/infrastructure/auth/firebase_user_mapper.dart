@@ -6,7 +6,7 @@ import 'package:injectable/injectable.dart';
 
 @lazySingleton
 class FirebaseUserMapper {
-  User toDomain(firebase.User _) {
+  User toDomain(firebase.FirebaseUser _) {
     if (_ == null) {
       return null;
     } else {

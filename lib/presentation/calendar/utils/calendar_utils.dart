@@ -11,7 +11,9 @@ import 'package:flutter_app/presentation/home/pages/appointment_page.dart';
 Widget headerItemBuilder(
     BuildContext context, DateTime day, CalendarEntry calendarEntry) {
   return Align(
-    alignment: Alignment.centerLeft,
+    alignment: calendarEntry == CalendarEntry.day
+        ? Alignment.centerLeft
+        : Alignment.center,
     child: Column(
       children: <Widget>[
         const SizedBox(

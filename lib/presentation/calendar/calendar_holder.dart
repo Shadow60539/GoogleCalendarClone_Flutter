@@ -160,7 +160,6 @@ class CalendarHolder extends StatelessWidget {
                         Icons.more_vert,
                         color: Palette.greyWhite.withOpacity(0.5),
                       ),
-                      captureInheritedThemes: true,
                       padding: const EdgeInsets.all(0),
                       elevation: 0,
                       shape: RoundedRectangleBorder(

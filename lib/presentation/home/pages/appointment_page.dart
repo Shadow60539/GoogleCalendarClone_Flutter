@@ -4,6 +4,7 @@ import 'package:flutter_app/application/calendar/calendar_bloc.dart';
 import 'package:flutter_app/core/enums/pop_up_enum.dart';
 import 'package:flutter_app/core/routes/route.gr.dart' as route;
 import 'package:flutter_app/domain/calendar/appointment.dart';
+import 'package:flutter_app/presentation/calendar/utils/feedback.dart';
 import 'package:flutter_app/presentation/core/palette.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -126,6 +127,7 @@ class AppointmentPage extends StatelessWidget {
               BlocProvider.of<CalendarBloc>(context).add(
                   CalendarEvent.deleteEvent(
                       calendarId: event.calendarId, eventId: event.eventId));
+              showFeedback(context: context, message: "Event Deleted");
               Navigator.pop(context);
             },
             itemBuilder: (context) {

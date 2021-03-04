@@ -106,7 +106,11 @@ class EventFormBloc extends Bloc<EventFormEvent, EventFormState> {
     Either<CalendarFailure, Unit> failureOrSuccess;
 
     if (state.title.isValid()) {
-      failureOrSuccess = await forwardCall();
+      failureOrSuccess = await forwardCall(
+          title: state.title,
+          start: state.startDate,
+          end: state.endDate,
+          eventId: state.eventId);
 
       yield state.copyWith(
         showErrorMessages: true,

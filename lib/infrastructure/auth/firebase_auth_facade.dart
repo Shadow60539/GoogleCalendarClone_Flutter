@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app/domain/auth/auth_failure.dart';
 import 'package:flutter_app/domain/auth/i_auth_facade.dart';
@@ -27,7 +27,8 @@ class FirebaseAuthFacade implements IAuthFacade {
 
   @override
   Future<Option<User>> getSignedInUser() async {
-    return optionOf(_firebaseUserMapper.toDomain(_firebaseAuth.currentUser));
+    return optionOf(
+        _firebaseUserMapper.toDomain(await _firebaseAuth.currentUser()));
   }
 
   @override
@@ -46,7 +47,7 @@ class FirebaseAuthFacade implements IAuthFacade {
           .then((userCredentails) async {
         return right(unit);
       });
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseException catch (e) {
       if (e.code == 'email-already-in-use') {
         return left(const AuthFailure.emailAlreadyInUse());
       } else {
@@ -71,7 +72,7 @@ class FirebaseAuthFacade implements IAuthFacade {
           .then((userCredentails) async {
         return right(unit);
       });
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseException catch (e) {
       if (e.code == 'wrong-password' || e.code == 'user-not-found') {
         return left(const AuthFailure.invalidEmailAndPasswordCombination());
       }
@@ -89,11 +90,12 @@ class FirebaseAuthFacade implements IAuthFacade {
       }
 
       final googleAuthentication = await googleUser.authentication;
-      final authCredential = GoogleAuthProvider.credential(
-        accessToken: googleAuthentication.accessToken,
-        idToken: googleAuthentication.idToken,
-      );
-      return _firebaseAuth.signInWithCredential(authCredential).then((r) async {
+
+      return _firebaseAuth
+          .signInWithGoogle(
+              idToken: googleAuthentication.idToken,
+              accessToken: googleAuthentication.accessToken)
+          .then((value) {
         return right(unit);
       });
     } on PlatformException catch (_) {
